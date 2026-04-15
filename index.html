@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Poppymission</title>
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Poppymission">
+  <!-- Inline SVG favicon / touch icon -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FFF8F0'/%3E%3Ctext y='.9em' font-size='72' x='10'%3E%F0%9F%92%A9%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%A9%3C/text%3E%3C/svg%3E">
+
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FFF8F0;
+      --brown: #6B3A1F;
+      --brown-light: #A0522D;
+      --gold: #F5A623;
+      --gold-light: #FFD98C;
+      --soft-shadow: 0 4px 18px rgba(107,58,31,.18);
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: var(--cream);
+      font-family: -apple-system, 'Helvetica Neue', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* ── App shell ── */
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Screens ── */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--safe-top) + 20px) 24px calc(var(--safe-bottom) + 20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease, transform .3s ease;
+      transform: translateX(30px);
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateX(0);
+    }
+    .screen.exit-left {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    /* ── Screen 1: Home ── */
+    #screen-home {
+      background: var(--cream);
+    }
+
+    .settings-btn {
+      position: absolute;
+      top: calc(var(--safe-top) + 18px);
+      right: 20px;
+      font-size: 26px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: transform .2s;
+      line-height: 1;
+    }
+    .settings-btn:active { transform: rotate(30deg) scale(.9); }
+
+    .poop-btn {
+      font-size: 110px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
+      animation: poop-bounce 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 8px 16px rgba(107,58,31,.3));
+      transition: transform .1s;
+    }
+    .poop-btn:active { transform: scale(.88); animation: none; }
+
+    @keyframes poop-bounce {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      30%       { transform: translateY(-18px) rotate(3deg); }
+      60%       { transform: translateY(-6px) rotate(-1deg); }
+    }
+
+    .home-tagline {
+      margin-top: 24px;
+      font-size: 17px;
+      color: var(--brown-light);
+      font-weight: 600;
+      letter-spacing: .3px;
+      opacity: .75;
+    }
+
+    /* ── Settings drawer ── */
+    #settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(107,58,31,.35);
+      z-index: 100;
+      align-items: flex-end;
+    }
+    #settings-overlay.open { display: flex; }
+
+    .settings-drawer {
+      background: var(--cream);
+      border-radius: 28px 28px 0 0;
+      padding: 28px 28px calc(var(--safe-bottom) + 28px);
+      width: 100%;
+      animation: drawer-up .28s ease;
+    }
+    @keyframes drawer-up {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .drawer-handle {
+      width: 44px;
+      height: 5px;
+      background: #D0B49A;
+      border-radius: 99px;
+      margin: 0 auto 24px;
+    }
+
+    .drawer-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #B08060;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .export-btn {
+      width: 100%;
+      background: var(--brown);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 18px;
+      font-weight: 700;
+      padding: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--soft-shadow);
+      transition: transform .1s, background .1s;
+    }
+    .export-btn:active { transform: scale(.96); background: var(--brown-light); }
+
+    .log-count {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+      color: #B08060;
+    }
+
+    /* ── Screen 2: Bristol ── */
+    #screen-bristol {
+      justify-content: flex-start;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-top: calc(var(--safe-top) + 20px);
+      background: var(--cream);
+    }
+
+    .screen-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--brown);
+      margin-bottom: 18px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .bristol-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 20px;
+    }
+
+    .bristol-card {
+      background: #fff;
+      border: 2.5px solid #F0DDD0;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(107,58,31,.08);
+      transition: transform .12s, border-color .12s, box-shadow .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bristol-card:active {
+      transform: scale(.97);
+      border-color: var(--gold);
+      box-shadow: 0 4px 16px rgba(245,166,35,.25);
+    }
+
+    .bristol-num {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--brown);
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .bristol-art {
+      font-size: 30px;
+      min-width: 62px;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .bristol-info { flex: 1; }
+    .bristol-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--brown);
+    }
+    .bristol-desc {
+      font-size: 12px;
+      color: #B08060;
+      margin-top: 2px;
+    }
+
+    .bristol-ideal {
+      font-size: 11px;
+      background: #E8F5E9;
+      color: #388E3C;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+
+    /* ── Screen 3: Questions ── */
+    #screen-questions {
+      background: var(--cream);
+      gap: 0;
+    }
+
+    .question-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: q-slide-in .3s ease;
+    }
+    @keyframes q-slide-in {
+      from { opacity: 0; transform: translateX(50px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .question-emoji {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--brown);
+      text-align: center;
+      margin-bottom: 38px;
+    }
+
+    .answer-row {
+      display: flex;
+      gap: 18px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .answer-btn {
+      flex: 1;
+      max-width: 150px;
+      background: #fff;
+      border: 2.5px solid #F0DDD0;
+      border-radius: var(--radius);
+      padding: 18px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(107,58,31,.08);
+      transition: transform .12s, border-color .12s, background .12s;
+    }
+    .answer-btn:active {
+      transform: scale(.93);
+      background: var(--gold-light);
+      border-color: var(--gold);
+    }
+
+    .answer-btn-emoji { font-size: 40px; line-height: 1; }
+    .answer-btn-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    /* ── Screen 4: Confirmation / Flush ── */
+    #screen-confirm {
+      background: var(--cream);
+    }
+
+    .flush-emoji {
+      font-size: 100px;
+      animation: flush-spin 1.6s ease-in-out forwards;
+      filter: drop-shadow(0 8px 20px rgba(107,58,31,.25));
+    }
+    @keyframes flush-spin {
+      0%   { transform: rotate(0deg) scale(1); }
+      25%  { transform: rotate(-15deg) scale(1.1); }
+      50%  { transform: rotate(20deg) scale(.9); }
+      70%  { transform: rotate(-8deg) scale(1.05); }
+      85%  { transform: rotate(5deg) scale(1); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .flush-swirl {
+      font-size: 36px;
+      margin-top: -10px;
+      animation: swirl .8s ease-in-out .4s 2 alternate;
+    }
+    @keyframes swirl {
+      from { transform: rotate(0deg) scale(.9); opacity: .6; }
+      to   { transform: rotate(180deg) scale(1.1); opacity: 1; }
+    }
+
+    .confirm-text {
+      margin-top: 24px;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--brown);
+    }
+    .confirm-sub {
+      margin-top: 8px;
+      font-size: 16px;
+      color: #B08060;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Screen 1: Home -->
+  <div id="screen-home" class="screen active">
+    <button class="settings-btn" id="settings-btn" aria-label="Settings">⚙️</button>
+    <button class="poop-btn" id="poop-btn" aria-label="Log a poop">💩</button>
+    <p class="home-tagline">Tap to log a visit</p>
+  </div>
+
+  <!-- Screen 2: Bristol Stool Scale -->
+  <div id="screen-bristol" class="screen">
+    <p class="screen-title">What type was it?</p>
+    <div class="bristol-list" id="bristol-list">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- Screen 3: Questions -->
+  <div id="screen-questions" class="screen">
+    <div class="question-wrapper" id="question-wrapper">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- Screen 4: Confirmation -->
+  <div id="screen-confirm" class="screen">
+    <div class="flush-emoji">🚽</div>
+    <div class="flush-swirl">🌀</div>
+    <p class="confirm-text">Logged! 🎉</p>
+    <p class="confirm-sub">Entry saved successfully</p>
+  </div>
+
+</div>
+
+<!-- Settings drawer -->
+<div id="settings-overlay" role="dialog" aria-modal="true" aria-label="Settings">
+  <div class="settings-drawer">
+    <div class="drawer-handle"></div>
+    <p class="drawer-title">Settings</p>
+    <button class="export-btn" id="export-btn">
+      <span>⬇️</span> Export CSV
+    </button>
+    <p class="log-count" id="log-count"></p>
+  </div>
+</div>
+
+<script>
+  // ── Data ──────────────────────────────────────────────────────────────────
+  const STORAGE_KEY = 'poppymission_logs';
+
+  function loadLogs() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveLogs(logs) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+  }
+
+  function addEntry(entry) {
+    const logs = loadLogs();
+    logs.push(entry);
+    saveLogs(logs);
+  }
+
+  // ── Bristol data ──────────────────────────────────────────────────────────
+  const BRISTOL = [
+    { type: 1, art: '🪨  🪨\n  🪨',   name: 'Separate hard lumps',   desc: 'Like nuts — very constipated' },
+    { type: 2, art: '🟤🟤🟤',          name: 'Lumpy sausage',          desc: 'Sausage-shaped, lumpy' },
+    { type: 3, art: '🟤〰️',            name: 'Cracked sausage',        desc: 'Sausage with surface cracks' },
+    { type: 4, art: '🟤〜〜',          name: 'Smooth snake',           desc: 'Soft & smooth — the ideal!', ideal: true },
+    { type: 5, art: '🟤 🟤\n  🟤',    name: 'Soft blobs',             desc: 'Clear-cut edges, passes easily' },
+    { type: 6, art: '💩〰️',            name: 'Mushy & fluffy',         desc: 'Fluffy pieces, ragged edges' },
+    { type: 7, art: '💧💧💧',          name: 'Watery',                 desc: 'No solid pieces — liquid' },
+  ];
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let currentEntry = {};
+
+  // ── Screen management ─────────────────────────────────────────────────────
+  const screens = {
+    home:      document.getElementById('screen-home'),
+    bristol:   document.getElementById('screen-bristol'),
+    questions: document.getElementById('screen-questions'),
+    confirm:   document.getElementById('screen-confirm'),
+  };
+
+  let activeScreen = 'home';
+
+  function showScreen(name) {
+    const prev = screens[activeScreen];
+    const next = screens[name];
+    prev.classList.add('exit-left');
+    prev.classList.remove('active');
+    setTimeout(() => prev.classList.remove('exit-left'), 350);
+    next.style.transform = 'translateX(30px)';
+    next.classList.add('active');
+    activeScreen = name;
+  }
+
+  function showHome() {
+    // Reset all screens without animation fuss
+    Object.values(screens).forEach(s => {
+      s.classList.remove('active', 'exit-left');
+      s.style.transform = '';
+    });
+    screens.home.classList.add('active');
+    screens.home.style.transform = 'translateX(0)';
+    activeScreen = 'home';
+    currentEntry = {};
+  }
+
+  // ── Build Bristol list ────────────────────────────────────────────────────
+  const bristolList = document.getElementById('bristol-list');
+  BRISTOL.forEach(b => {
+    const card = document.createElement('button');
+    card.className = 'bristol-card';
+    card.setAttribute('aria-label', `Type ${b.type}: ${b.name}`);
+    card.innerHTML = `
+      <span class="bristol-num">${b.type}</span>
+      <span class="bristol-art">${b.art}</span>
+      <span class="bristol-info">
+        <span class="bristol-name">${b.name}</span>
+        <span class="bristol-desc">${b.desc}</span>
+      </span>
+      ${b.ideal ? '<span class="bristol-ideal">✨ Ideal</span>' : ''}
+    `;
+    card.addEventListener('click', () => {
+      currentEntry.bristolType = b.type;
+      showQuestion('clean');
+      showScreen('questions');
+    });
+    bristolList.appendChild(card);
+  });
+
+  // ── Questions ─────────────────────────────────────────────────────────────
+  const questionWrapper = document.getElementById('question-wrapper');
+
+  function showQuestion(which) {
+    questionWrapper.innerHTML = '';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'question-wrapper';
+
+    if (which === 'clean') {
+      wrapper.innerHTML = `
+        <div class="question-emoji">🧻</div>
+        <p class="question-text">Clean wipe?</p>
+        <div class="answer-row">
+          <button class="answer-btn" id="q-yes" aria-label="Yes">
+            <span class="answer-btn-emoji">✅</span>
+            <span class="answer-btn-label">Yes</span>
+          </button>
+          <button class="answer-btn" id="q-no" aria-label="No">
+            <span class="answer-btn-emoji">❌</span>
+            <span class="answer-btn-label">No</span>
+          </button>
+        </div>
+      `;
+      questionWrapper.appendChild(wrapper);
+      wrapper.querySelector('#q-yes').addEventListener('click', () => {
+        currentEntry.cleanWipe = true;
+        showQuestion('great');
+      });
+      wrapper.querySelector('#q-no').addEventListener('click', () => {
+        currentEntry.cleanWipe = false;
+        showQuestion('great');
+      });
+
+    } else {
+      wrapper.innerHTML = `
+        <div class="question-emoji">✨</div>
+        <p class="question-text">Great poop?</p>
+        <div class="answer-row">
+          <button class="answer-btn" id="q-yay" aria-label="Yay">
+            <span class="answer-btn-emoji">😀</span>
+            <span class="answer-btn-label">Yay!</span>
+          </button>
+          <button class="answer-btn" id="q-meh" aria-label="Meh">
+            <span class="answer-btn-emoji">😕</span>
+            <span class="answer-btn-label">Meh…</span>
+          </button>
+        </div>
+      `;
+      questionWrapper.appendChild(wrapper);
+      wrapper.querySelector('#q-yay').addEventListener('click', () => {
+        currentEntry.greatPoop = true;
+        saveAndConfirm();
+      });
+      wrapper.querySelector('#q-meh').addEventListener('click', () => {
+        currentEntry.greatPoop = false;
+        saveAndConfirm();
+      });
+    }
+  }
+
+  // ── Save & confirm ────────────────────────────────────────────────────────
+  function saveAndConfirm() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    currentEntry.date = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    currentEntry.time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    addEntry({ ...currentEntry });
+
+    // Reset confirm animation by re-cloning the emoji
+    const confirmScreen = screens.confirm;
+    const oldEmoji = confirmScreen.querySelector('.flush-emoji');
+    const newEmoji = oldEmoji.cloneNode(true);
+    oldEmoji.replaceWith(newEmoji);
+    const oldSwirl = confirmScreen.querySelector('.flush-swirl');
+    const newSwirl = oldSwirl.cloneNode(true);
+    oldSwirl.replaceWith(newSwirl);
+
+    showScreen('confirm');
+    setTimeout(showHome, 2400);
+  }
+
+  // ── Home button ───────────────────────────────────────────────────────────
+  document.getElementById('poop-btn').addEventListener('click', () => {
+    currentEntry = {};
+    // Scroll bristol list to top
+    document.getElementById('screen-bristol').scrollTop = 0;
+    showScreen('bristol');
+  });
+
+  // ── Settings drawer ───────────────────────────────────────────────────────
+  const overlay = document.getElementById('settings-overlay');
+
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    const logs = loadLogs();
+    document.getElementById('log-count').textContent =
+      logs.length === 0 ? 'No entries yet'
+      : logs.length === 1 ? '1 entry logged'
+      : `${logs.length} entries logged`;
+    overlay.classList.add('open');
+  });
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+
+  // ── Export CSV ────────────────────────────────────────────────────────────
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const logs = loadLogs();
+    if (logs.length === 0) {
+      alert('No entries to export yet!');
+      return;
+    }
+
+    const header = 'date,time,bristol_type,clean_wipe,great_poop';
+    const rows = logs.map(e =>
+      [e.date, e.time, e.bristolType,
+       e.cleanWipe ? 'yes' : 'no',
+       e.greatPoop ? 'yes' : 'no'
+      ].join(',')
+    );
+    const csv = [header, ...rows].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `poppymission-${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    overlay.classList.remove('open');
+  });
+</script>
+</body>
+</html>
