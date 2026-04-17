@@ -238,10 +238,10 @@
     }
 
     .bristol-art {
-      font-size: 30px;
       min-width: 62px;
-      text-align: center;
-      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .bristol-info { flex: 1; }
@@ -442,13 +442,102 @@
 
   // ── Bristol data ──────────────────────────────────────────────────────────
   const BRISTOL = [
-    { type: 1, art: '🪨  🪨\n  🪨',   name: 'Separate hard lumps',   desc: 'Like nuts — very constipated' },
-    { type: 2, art: '🟤🟤🟤',          name: 'Lumpy sausage',          desc: 'Sausage-shaped, lumpy' },
-    { type: 3, art: '🟤〰️',            name: 'Cracked sausage',        desc: 'Sausage with surface cracks' },
-    { type: 4, art: '🟤〜〜',          name: 'Smooth snake',           desc: 'Soft & smooth — the ideal!', ideal: true },
-    { type: 5, art: '🟤 🟤\n  🟤',    name: 'Soft blobs',             desc: 'Clear-cut edges, passes easily' },
-    { type: 6, art: '💩〰️',            name: 'Mushy & fluffy',         desc: 'Fluffy pieces, ragged edges' },
-    { type: 7, art: '💧💧💧',          name: 'Watery',                 desc: 'No solid pieces — liquid' },
+    {
+      type: 1,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="20" r="6.5" fill="#6B3410"/>
+        <circle cx="30" cy="13" r="6"   fill="#7A3D15"/>
+        <circle cx="50" cy="20" r="6.5" fill="#6B3410"/>
+        <circle cx="20" cy="33" r="6"   fill="#7A3D15"/>
+        <circle cx="42" cy="33" r="5.5" fill="#8B4513"/>
+        <circle cx="8.5"  cy="18"   r="2"   fill="rgba(255,255,255,.22)"/>
+        <circle cx="28.5" cy="11.5" r="1.5" fill="rgba(255,255,255,.22)"/>
+        <circle cx="48.5" cy="18"   r="2"   fill="rgba(255,255,255,.22)"/>
+      </svg>`,
+      name: 'Separate hard lumps', desc: 'Like nuts — very constipated',
+    },
+    {
+      type: 2,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="30" cy="29" rx="24" ry="9"   fill="#6B3410"/>
+        <ellipse cx="11" cy="23" rx="9"  ry="8"   fill="#8B4513"/>
+        <ellipse cx="24" cy="20" rx="8"  ry="7.5" fill="#9A5020"/>
+        <ellipse cx="37" cy="20" rx="8"  ry="7.5" fill="#9A5020"/>
+        <ellipse cx="50" cy="23" rx="9"  ry="8"   fill="#8B4513"/>
+        <ellipse cx="9.5"  cy="21" rx="2.5" ry="2" fill="rgba(255,255,255,.18)"/>
+        <ellipse cx="22.5" cy="18" rx="2"   ry="2" fill="rgba(255,255,255,.18)"/>
+      </svg>`,
+      name: 'Lumpy sausage', desc: 'Sausage-shaped, lumpy',
+    },
+    {
+      type: 3,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="30" cy="25" rx="26" ry="11" fill="#8B4513"/>
+        <ellipse cx="6"  cy="25" rx="8"  ry="11" fill="#9A5020"/>
+        <ellipse cx="54" cy="25" rx="8"  ry="11" fill="#9A5020"/>
+        <ellipse cx="30" cy="33" rx="25" ry="4"  fill="#5A2808" opacity=".28"/>
+        <path d="M21,15 L18,34" stroke="#5A2808" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M33,14 L31,35" stroke="#5A2808" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M44,16 L43,33" stroke="#5A2808" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <ellipse cx="8" cy="23" rx="2.5" ry="2" fill="rgba(255,255,255,.18)"/>
+      </svg>`,
+      name: 'Cracked sausage', desc: 'Sausage with surface cracks',
+    },
+    {
+      type: 4,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6,32 C14,32 16,14 28,19 C38,24 42,36 54,28"
+              stroke="#5A2808" stroke-width="17" stroke-linecap="round" fill="none"/>
+        <path d="M6,32 C14,32 16,14 28,19 C38,24 42,36 54,28"
+              stroke="#A0522D" stroke-width="13" stroke-linecap="round" fill="none"/>
+        <path d="M7,30 C15,30 17,13 29,18 C39,23 43,35 53,27"
+              stroke="rgba(255,255,255,.22)" stroke-width="4" stroke-linecap="round" fill="none"/>
+      </svg>`,
+      name: 'Smooth snake', desc: 'Soft & smooth — the ideal!', ideal: true,
+    },
+    {
+      type: 5,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="11" cy="22" rx="9"   ry="8"   fill="#A0522D"/>
+        <ellipse cx="30" cy="16" rx="8.5" ry="9"   fill="#9A5020"/>
+        <ellipse cx="49" cy="24" rx="9"   ry="8"   fill="#A0522D"/>
+        <ellipse cx="21" cy="35" rx="7"   ry="6"   fill="#8B4513"/>
+        <ellipse cx="40" cy="36" rx="7"   ry="6"   fill="#8B4513"/>
+        <ellipse cx="9.5"  cy="20" rx="2.5" ry="2" fill="rgba(255,255,255,.18)"/>
+        <ellipse cx="28.5" cy="14" rx="2"   ry="2" fill="rgba(255,255,255,.18)"/>
+      </svg>`,
+      name: 'Soft blobs', desc: 'Clear-cut edges, passes easily',
+    },
+    {
+      type: 6,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6,26 C4,18 8,10 16,12 C20,5 28,8 30,12 C34,5 42,8 46,14
+                 C52,10 58,18 57,26 C61,32 56,41 48,39 C44,45 36,42 30,40
+                 C24,45 16,42 12,38 C4,38 2,34 6,26Z"
+              fill="#8B4513"/>
+        <path d="M14,22 C18,17 25,19 28,22" stroke="#5A2808" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M34,25 C38,20 45,22 47,27" stroke="#5A2808" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="12" cy="18" rx="2.5" ry="2" fill="rgba(255,255,255,.15)"/>
+      </svg>`,
+      name: 'Mushy & fluffy', desc: 'Fluffy pieces, ragged edges',
+    },
+    {
+      type: 7,
+      art: `<svg width="60" height="44" viewBox="0 0 60 44" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="30" cy="30" rx="13" ry="8"   fill="#A0522D" opacity=".75"/>
+        <ellipse cx="8"  cy="23" rx="4.5" ry="5.5" fill="#A0522D" opacity=".8"/>
+        <ellipse cx="53" cy="20" rx="5"   ry="4"   fill="#A0522D" opacity=".75"/>
+        <ellipse cx="18" cy="39" rx="4"   ry="3.5" fill="#8B4513" opacity=".7"/>
+        <ellipse cx="47" cy="39" rx="3.5" ry="4"   fill="#8B4513" opacity=".7"/>
+        <ellipse cx="46" cy="11" rx="3"   ry="4"   fill="#A0522D" opacity=".65"/>
+        <ellipse cx="15" cy="11" rx="2.5" ry="3"   fill="#A0522D" opacity=".65"/>
+        <line x1="30" y1="22" x2="30" y2="8"  stroke="#A0522D" stroke-width="2"   stroke-linecap="round" opacity=".5"/>
+        <line x1="38" y1="24" x2="50" y2="13" stroke="#A0522D" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+        <line x1="22" y1="24" x2="12" y2="13" stroke="#A0522D" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+        <circle cx="30" cy="7" r="2.5" fill="#A0522D" opacity=".5"/>
+      </svg>`,
+      name: 'Watery', desc: 'No solid pieces — liquid',
+    },
   ];
 
   // ── State ─────────────────────────────────────────────────────────────────
